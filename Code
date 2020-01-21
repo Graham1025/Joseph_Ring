@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+typedef struct CLNode
+{
+	int data;
+	struct CLNode *next;
+} CLNode, *CirLinkList;
+
+void Create_Joseph_Ring(CirLinkList *L) {
+	int i, j, one;
+	//定义一个结构体类型的指针变量
+	CirLinkList p;
+	//尾插法需要增加一个指向尾部的指针
+	CirLinkList t;
+	printf("请输入要创建元素的个数：");
+	scanf("%d", &j);
+	//LNode在引入参数时就进行了定义，此时分配LNode个存储空间
+	*L = (CirLinkList)malloc(sizeof(CLNode));
+	//定义为空的循环链表
+	(*L)->next = *L;
+	t = *L;
+	printf("\n请按1开始创建链表：");
+	scanf("%d", &one);
+	//尾插法创建循环链表
+	for (i = 0; i < j; i++) {
+		p = (CirLinkList)malloc(sizeof(CLNode));
+		p->data = i + 1;
+		p->next = t->next;
+		t->next = p;
+		//这一步很关键，始终保证该指针指向尾部
+		t = p;
+	}
+	//删除循环链表头节点,仍然保证是循环链表
+	t->next = (*L)->next;
+	t = *L;
+	*L = (*L)->next;
+	free(t);
+}
+
+//无头结点循环列表的遍历
+int Through_List(CirLinkList T) {
+	int num = 0;
+	CirLinkList t;
+	t = T;
+	printf("\n遍历链表如下：\n");
+	do{
+		printf("%d ",T->data);
+		num++;
+		T = T->next;
+	} while (T!= t);
+	printf("\n");
+	return(num);
+}
+
+void Delete_third_element_in_circle(CirLinkList *D) {
+	int i;
+	CirLinkList p;
+	CirLinkList m;
+	m = (*D);
+	p = m->next->next;
+	m->next->next = m->next->next->next;
+	free(p);
+	(*D) = m->next->next;
+}
+
+int main()
+{
+	CirLinkList h;
+	//创建循环链表
+	Create_Joseph_Ring(&h);
+	//遍历循环链表
+	Through_List(h);
+	//删除元素得到约瑟夫环
+	while (Through_List(h)>2)
+	Delete_third_element_in_circle(&h);
+	printf("\n");
+	getchar();
+	return 0;
+}
